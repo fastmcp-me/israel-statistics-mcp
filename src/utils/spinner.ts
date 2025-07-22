@@ -1,5 +1,8 @@
 import { RequestHandlerExtra } from "@modelcontextprotocol/sdk/shared/protocol"
-import { ServerRequest, ServerNotification } from "@modelcontextprotocol/sdk/types"
+import {
+  ServerNotification,
+  ServerRequest,
+} from "@modelcontextprotocol/sdk/types"
 
 export function spinner(
   text: string,
@@ -8,28 +11,40 @@ export function spinner(
   total: number = 100,
   updateRequestId?: string | number
 ) {
-  const isExtra = extra?.sendNotification !== undefined;
-  const requestId = updateRequestId || extra?.requestId;
+  const isExtra = extra?.sendNotification !== undefined
+  const requestId = updateRequestId || extra?.requestId
 
   function notify(payload: ServerNotification | null) {
     if (!isExtra || !payload) {
-      console.error("extra is required");
-      return spinnerObj;
+      console.error("extra is required")
+      return spinnerObj
     }
-    extra.sendNotification(payload);
-    return spinnerObj;
+    extra.sendNotification(payload)
+    return spinnerObj
   }
 
   const spinnerObj = {
     start: (msg?: string) =>
       notify({
         method: "notifications/progress",
-        params: { progressToken, message: msg || text, progress: 0, total, requestId },
+        params: {
+          progressToken,
+          message: msg || text,
+          progress: 0,
+          total,
+          requestId,
+        },
       }),
     succeed: (msg?: string) =>
       notify({
         method: "notifications/progress",
-        params: { progressToken, message: msg || text, progress: 1, total, requestId },
+        params: {
+          progressToken,
+          message: msg || text,
+          progress: 1,
+          total,
+          requestId,
+        },
       }),
     fail: (msg?: string) =>
       notify({
@@ -54,7 +69,11 @@ export function spinner(
     stopAndPersist: () =>
       notify({
         method: "notifications/message",
-        params: { level: "info", data: { text: "Stopped and persisted" }, requestId },
+        params: {
+          level: "info",
+          data: { text: "Stopped and persisted" },
+          requestId,
+        },
       }),
     progress: (progress: number, message?: string) =>
       notify({
@@ -62,7 +81,7 @@ export function spinner(
         params: { progressToken, progress, message, total, requestId },
       }),
     text,
-  };
+  }
 
-  return spinnerObj;
+  return spinnerObj
 }

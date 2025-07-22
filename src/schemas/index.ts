@@ -1,1 +1,1 @@
-export * from './ping-pong.schema'
+export * from "./ping-pong.schema"

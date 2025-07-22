@@ -7,6 +7,8 @@ const jsonSchema = z.object({
 
 export const pongSchema = jsonSchema
 
-export const pingSchema = z.object({
-  number_of_loops: z.number().optional().describe("Number of loops to run"),
-}).extend(jsonSchema.shape)
+export const pingSchema = z
+  .object({
+    number_of_loops: z.number().optional().describe("Number of loops to run"),
+  })
+  .extend(jsonSchema.shape)

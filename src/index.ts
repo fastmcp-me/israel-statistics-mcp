@@ -1,11 +1,12 @@
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { pong } from "./mcp/handlers/pong";
-import { ping } from "./mcp/handlers/ping";
-import { pongSchema, pingSchema } from "./schemas";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
+
+import { ping } from "./mcp/handlers/ping"
+import { pong } from "./mcp/handlers/pong"
+import { pingSchema, pongSchema } from "./schemas"
 
 async function main() {
-  console.error("[MCP] Starting israel-statistics-mcp MCP server...");
+  console.error("[MCP] Starting israel-statistics-mcp MCP server...")
 
   const server = new McpServer(
     {
@@ -21,29 +22,29 @@ async function main() {
         },
       },
     }
-  );
+  )
 
   // Security configuration
-  const MAX_CONCURRENT_OPERATIONS = 5;
-  let activeOperations = 0;
+  const MAX_CONCURRENT_OPERATIONS = 5
+  let activeOperations = 0
 
   // Wrapper function to enforce rate limiting
   function withRateLimit<T extends any[], R>(fn: (...args: T) => Promise<R>) {
     return async (...args: T): Promise<R> => {
       if (activeOperations >= MAX_CONCURRENT_OPERATIONS) {
-        throw new Error("Too many concurrent operations. Please try again later.");
+        throw new Error(
+          "Too many concurrent operations. Please try again later."
+        )
       }
 
-      activeOperations++;
+      activeOperations++
       try {
-        return await fn(...args);
+        return await fn(...args)
       } finally {
-        activeOperations--;
+        activeOperations--
       }
-    };
+    }
   }
-
-
 
   server.registerTool(
     "pingo",
@@ -52,15 +53,15 @@ async function main() {
       inputSchema: pingSchema.shape,
     },
     async (args) => {
-      const result = await ping(args);
+      const result = await ping(args)
       return {
         content: result.content.map((c) => ({
           type: "text" as const,
           text: c.text || "",
-        }))
-      };
+        })),
+      }
     }
-  );
+  )
 
   server.registerTool(
     "pongo",
@@ -69,43 +70,42 @@ async function main() {
       inputSchema: pongSchema.shape,
     },
     async (args) => {
-      const result = await pong(args);
+      const result = await pong(args)
       return {
         content: result.content.map((c) => ({
           type: "text" as const,
           text: c.text || "",
-        }))
-      };
+        })),
+      }
     }
-  );
+  )
 
-
-  console.error("[MCP] Tools registered successfully");
+  console.error("[MCP] Tools registered successfully")
 
   // Create stdio transport
-  const transport = new StdioServerTransport();
-  console.error("[MCP] Created stdio transport");
+  const transport = new StdioServerTransport()
+  console.error("[MCP] Created stdio transport")
 
   // Connect the server to the transport
-  await server.connect(transport);
-  console.error("[MCP] Server connected to stdio transport");
+  await server.connect(transport)
+  console.error("[MCP] Server connected to stdio transport")
 
   // The server will now handle requests via stdin/stdout
-  console.error("[MCP] MCP server ready for requests");
+  console.error("[MCP] MCP server ready for requests")
 }
 
 // Handle errors and ensure proper shutdown
-process.on('SIGINT', () => {
-  console.error("[MCP] Received SIGINT, shutting down...");
-  process.exit(0);
-});
+process.on("SIGINT", () => {
+  console.error("[MCP] Received SIGINT, shutting down...")
+  process.exit(0)
+})
 
-process.on('SIGTERM', () => {
-  console.error("[MCP] Received SIGTERM, shutting down...");
-  process.exit(0);
-});
+process.on("SIGTERM", () => {
+  console.error("[MCP] Received SIGTERM, shutting down...")
+  process.exit(0)
+})
 
 main().catch((error) => {
-  console.error("[MCP] Fatal error:", error);
-  process.exit(1);
-});
+  console.error("[MCP] Fatal error:", error)
+  process.exit(1)
+})

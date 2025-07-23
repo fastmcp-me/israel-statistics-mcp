@@ -7,7 +7,7 @@ import {
   currencySchema,
   formatSchema,
   oldFormatSchema,
-} from "./shared"
+} from "./shared.schema"
 
 // Common global parameters for all API calls
 const globalParamsSchema = {

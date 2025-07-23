@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { chapterSchema } from "./shared"
+import { chapterSchema } from "./shared.schema"
 
 // Base pagination schema - used across multiple API responses
 export const paginationSchema = z

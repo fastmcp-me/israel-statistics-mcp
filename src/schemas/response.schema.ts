@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { chapterSchema } from "./shared"
+import { chapterSchema } from "./shared.schema"
 import {
   paginationSchema,
   subjectCodeSchema,

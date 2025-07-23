@@ -1,1 +1,3 @@
-export * from "./ping-pong.schema"
+export * from "./request.schema"
+export * from "./response.schema"
+export * from "./base.schema"

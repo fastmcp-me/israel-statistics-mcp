@@ -33,10 +33,6 @@ RUN useradd -m appuser
 
 WORKDIR /app
 
-# Copy entrypoint script
-COPY entrypoint.sh ./entrypoint.sh
-RUN chmod +x ./entrypoint.sh
-
 # Copy over the package manifests and the entire built israel-statistics-mcp app
 COPY --from=builder /app/pnpm-lock.yaml .
 COPY --from=builder /app/package.json .

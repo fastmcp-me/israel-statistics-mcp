@@ -1,17 +1,25 @@
 {
   "name": "@reuvennaor85/israel-statistics-mcp",
   "version": "0.0.1",
-  "description": "Israel Statistics MCP",
+  "description": "Model Context Protocol (MCP) server for Israeli Central Bureau of Statistics (CBS) price indices and economic data. Provides 8 comprehensive tools for retrieving, analyzing, and calculating Israeli economic statistics including CPI, housing prices, producer indices, and inflation calculations.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.js",
+  "bin": {
+    "israel-statistics-mcp": "./dist/index.js",
+    "israstat-mcp": "./dist/index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "license": "MIT",
   "author": {
     "name": "reuvenaor",
+    "email": "contact@reuvenaor.com",
     "url": "https://reuvenaor.com"
   },
   "repository": {
@@ -19,42 +27,56 @@
     "url": "https://github.com/reuvenaor/israel-statistics-mcp.git",
     "directory": "israel-statistics-mcp"
   },
+  "bugs": {
+    "url": "https://github.com/reuvenaor/israel-statistics-mcp/issues"
+  },
+  "homepage": "https://github.com/reuvenaor/israel-statistics-mcp#readme",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "keywords": [
     "mcp",
     "israel",
     "statistics",
-    "israel-statistics-mcp",
-    "israel-statistics"
+    "cbs",
+    "cpi",
+    "inflation",
+    "economic-data",
+    "price-index",
+    "housing-prices",
+    "model-context-protocol",
+    "israeli-economy",
+    "consumer-price-index",
+    "producer-price-index",
+    "construction-index",
+    "agriculture-index",
+    "typescript",
+    "api-client",
+    "economic-analysis",
+    "statistical-data"
   ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./registry": {
-      "types": "./dist/registry/index.d.ts",
-      "default": "./dist/mcp/index.js"
-    },
-    "./mcp": {
-      "types": "./dist/mcp/index.d.ts",
-      "default": "./dist/mcp/index.js"
-    }
+    "./package.json": "./package.json"
   },
-  "bin": "./dist/index.js",
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist && rimraf components",
     "start": "node dist/index.js",
+    "prepublishOnly": "pnpm run clean && pnpm run build && pnpm run typecheck && pnpm run test",
     "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "lint": "eslint src/**/*.ts --ext .ts",
     "lint:fix": "eslint src/**/*.ts --ext .ts --fix",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@babel/core": "^7.22.1",

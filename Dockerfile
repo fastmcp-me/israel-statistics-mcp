@@ -1,53 +1,62 @@
 # Dockerfile for israel-statistics-mcp MCP server
 
-# 1. Builder stage
-FROM node:20-slim AS builder
+# 1. Builder stage - Use the latest Node.js 20 image with specific version
+FROM node:22.2.0-bookworm-slim AS builder
+
+# Update packages first to get security patches
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+    ca-certificates && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user
-RUN useradd -m appuser
+RUN useradd -m -u 1001 appuser
 
 WORKDIR /app
 
-# Install pnpm globally
-RUN npm install -g pnpm
+# Install pnpm globally with latest version
+RUN npm install -g pnpm@latest
 
 # Copy all package manifests for a full workspace install
 COPY package.json pnpm-lock.yaml ./
-COPY tsconfig.json ./
+COPY tsconfig.json tsconfig.base.json ./
 
 # Install all dependencies for the israel-statistics-mcp workspace package
 RUN pnpm install --frozen-lockfile
 
 # Copy the rest of the source code
-COPY . ./
+COPY src/ ./src/
+COPY tsup.config.ts ./
 
 # Build the project
-WORKDIR /app
 RUN pnpm run build
 
-# 2. Final image
-FROM node:20-slim
+# Remove dev dependencies and keep only production deps
+RUN pnpm prune --prod
+
+# 2. Final stage - Use official Node.js slim (approved by Docker Hub)
+FROM node:22.2.0-bookworm-slim
+
+# Update packages for security
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user
-RUN useradd -m appuser
+RUN useradd -m -u 1001 appuser
 
 WORKDIR /app
 
-# Copy over the package manifests and the entire built israel-statistics-mcp app
-COPY --from=builder /app/pnpm-lock.yaml .
-COPY --from=builder /app/package.json .
-COPY --from=builder /app ./
+# Copy the built application from builder
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/dist ./dist/
+COPY --from=builder /app/node_modules ./node_modules/
 
-# Install pnpm globally
-RUN npm install -g pnpm
-
-# # Expose the port the app runs on
-# EXPOSE 8080
-
-# This allows pnpm to correctly link workspace packages.
-RUN pnpm install --prod
-
-# Switch to the non-root user
+# Switch to non-root user
 USER appuser
 
+# Run the application
 CMD ["node", "dist/index.js"]

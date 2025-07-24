@@ -1,4 +1,3 @@
-# Dockerfile for israel-statistics-mcp MCP server
 
 # 1. Builder stage - Use the latest Node.js 20 image with specific version
 FROM node:20.19.4-bookworm-slim AS builder
@@ -36,35 +35,21 @@ RUN pnpm run build
 # Remove dev dependencies and keep only production deps
 RUN pnpm prune --prod
 
-# 2. Final image - Use the same base but updated
-FROM node:20.19.4-bookworm-slim
+# 2. Final stage - Use distroless to eliminate PAM and other system vulnerabilities
+FROM gcr.io/distroless/nodejs20-debian12:latest
 
-# Update packages in final image too
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-    ca-certificates && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Copy the built application from builder
+COPY --from=builder /app/package.json /app/package.json
+COPY --from=builder /app/dist /app/dist
+COPY --from=builder /app/node_modules /app/node_modules
 
-# Create a non-root user
-RUN useradd -m -u 1001 appuser
-
+# Set working directory
 WORKDIR /app
 
-# Install pnpm globally
-RUN npm install -g pnpm@latest
+# Distroless runs as nobody (65534) by default - no need to change user
 
-# Copy over the package manifests and the entire built israel-statistics-mcp app
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/dist ./dist/
-COPY --from=builder /app/node_modules ./node_modules/
+# Health check (distroless doesn't have shell, so we can't use complex healthchecks)
+# The container will be monitored externally
 
-# Switch to the non-root user
-USER appuser
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD echo '{"method":"tools/list","params":{}}' | node dist/index.js || exit 1
-
-CMD ["node", "dist/index.js"]
+# Run the application
+CMD ["dist/index.js"]

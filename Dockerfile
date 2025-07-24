@@ -1,7 +1,7 @@
 # Dockerfile for israel-statistics-mcp MCP server
 
 # 1. Builder stage - Use the latest Node.js 20 image with specific version
-FROM node:20.19.4-bookworm-slim AS builder
+FROM node:22.2.0-bookworm-slim AS builder
 
 # Update packages first to get security patches
 RUN apt-get update && \
@@ -37,7 +37,7 @@ RUN pnpm run build
 RUN pnpm prune --prod
 
 # 2. Final stage - Use official Node.js slim (approved by Docker Hub)
-FROM node:20.19.4-bookworm-slim
+FROM node:22.2.0-bookworm-slim
 
 # Update packages for security
 RUN apt-get update && \

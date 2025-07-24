@@ -23,7 +23,7 @@ A **Model Context Protocol (MCP) server** that provides programmatic access to t
 {
   "israel-statistics-mcp": {
     "command": "npx",
-    "args": ["@reuvennaor85/israel-statistics-mcp"]
+    "args": ["@reuvenorg/israel-statistics-mcp"]
   }
 }
 ```
@@ -294,7 +294,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 - **Repository**: [https://github.com/reuvenaor/israel-statistics-mcp](https://github.com/reuvenaor/israel-statistics-mcp)
 - **Docker Hub**: [reuvenaor/israel-statistics-mcp](https://hub.docker.com/r/reuvenaor/israel-statistics-mcp)
-- **NPM Package**: [@reuvennaor85/israel-statistics-mcp](https://www.npmjs.com/package/@reuvennaor85/israel-statistics-mcp)
+- **NPM Package**: [@reuvenorg/israel-statistics-mcp](https://www.npmjs.com/package/@reuvenorg/israel-statistics-mcp)
 - **CBS API Documentation**: [Israel Central Bureau of Statistics](https://api.cbs.gov.il/)
 - **MCP Protocol**: [Model Context Protocol Specification](https://modelcontextprotocol.io/)
 

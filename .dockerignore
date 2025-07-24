@@ -1,22 +1,86 @@
-node_modules
+# Git and version control
 .git
-.turbo
-.vscode
-.DS_Store
-*.log
+.github
+.gitignore
 
-deprecated/
-scripts/
-templates/
+# Development files
 .cursor/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment files
+.env*
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Documentation and analysis files
 *.md
-!README.md 
+DOCKER_PUBLISHING.md
+!README.md
+docs/
+2020-RES.md
+2023-RES.md
+CLAUDE.md
+INST-HEBREW.md
+res.json
 
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Test files
+__tests__/
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+coverage/
+test-results/
 
+# Build artifacts (except dist/ which we need)
+node_modules/
+.cache/
+.temp/
+tmp/
+temp/
 
-dist
-test
+# Logs
+*.log
+.pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# IDE and editor files
+.idea/
+*.sublime-*
+
+# OS generated files
+ehthumbs_vista.db
+
+# Package managers lock files (we'll copy them explicitly)
+# Keep package.json and pnpm-lock.yaml as they're copied explicitly
+
+# Development configs that aren't needed in container
+eslint.config.js
+prettier.config.cjs
+vitest.config.ts
+vitest.workspace.ts
+turbo.json
+
+# TypeScript config (we copy it explicitly)
+# tsconfig.base.json
+
+# Publishing and development guides
+PUBLISHING.md
+DOCKER_PUBLISHING.md

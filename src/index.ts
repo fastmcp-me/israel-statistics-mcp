@@ -1,9 +1,28 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 
-import { ping } from "./mcp/handlers/ping"
-import { pong } from "./mcp/handlers/pong"
-import { pingSchema, pongSchema } from "./schemas"
+import { getIndexData } from "./mcp/handlers/getIndexData"
+import { getIndexTopics } from "./mcp/handlers/getIndexTopics"
+import { getCatalogChapters } from "./mcp/handlers/getCatalogChapters"
+import { getChapterTopics } from "./mcp/handlers/getChapterTopics"
+import { getSubjectCodes } from "./mcp/handlers/getSubjectCodes"
+import { getIndexCalculator } from "./mcp/handlers/getIndexCalculator"
+import {
+  getMainIndices,
+  getMainIndicesByPeriod,
+} from "./mcp/handlers/getMainIndices"
+import { getAllIndices } from "./mcp/handlers/getAllIndices"
+import {
+  getIndexDataSchema,
+  getIndexTopicsSchema,
+  getCatalogChaptersSchema,
+  getChapterTopicsSchema,
+  getSubjectCodesSchema,
+  getIndexCalculatorSchema,
+  getMainIndicesSchema,
+  getMainIndicesByPeriodSchema,
+  getAllIndicesSchema,
+} from "./schemas/request.schema"
 
 async function main() {
   console.error("[MCP] Starting israel-statistics-mcp MCP server...")
@@ -46,41 +65,185 @@ async function main() {
     }
   }
 
+  // Register tools
   server.registerTool(
-    "pingo",
+    "get_index_topics",
     {
-      description: "Respond to the user prompt",
-      inputSchema: pingSchema.shape,
+      description: "Get index topics from Israel Statistics API",
+      inputSchema: getIndexTopicsSchema.shape,
     },
-    async (args) => {
-      const result = await ping(args)
+    withRateLimit(async (args) => {
+      const result = await getIndexTopics(args)
       return {
-        content: result.content.map((c) => ({
-          type: "text" as const,
-          text: c.text || "",
-        })),
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result),
+          },
+        ],
       }
-    }
+    })
+  )
+  server.registerTool(
+    "get_index_data",
+    {
+      description: "Get index data from Israel Statistics API",
+      inputSchema: getIndexDataSchema.shape,
+    },
+    withRateLimit(async (args) => {
+      const result = await getIndexData(args)
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result),
+          },
+        ],
+      }
+    })
+  )
+
+  // Register catalog tools
+  server.registerTool(
+    "get_catalog_chapters",
+    {
+      description: "Get list of index chapters from Israel Statistics API",
+      inputSchema: getCatalogChaptersSchema.shape,
+    },
+    withRateLimit(async (args) => {
+      const result = await getCatalogChapters(args)
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result),
+          },
+        ],
+      }
+    })
   )
 
   server.registerTool(
-    "pongo",
+    "get_chapter_topics",
     {
-      description: "Respond to the user prompt",
-      inputSchema: pongSchema.shape,
+      description:
+        "Get topics for a specific chapter from Israel Statistics API",
+      inputSchema: getChapterTopicsSchema.shape,
     },
-    async (args) => {
-      const result = await pong(args)
+    withRateLimit(async (args) => {
+      const result = await getChapterTopics(args)
       return {
-        content: result.content.map((c) => ({
-          type: "text" as const,
-          text: c.text || "",
-        })),
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result),
+          },
+        ],
       }
-    }
+    })
   )
 
-  console.error("[MCP] Tools registered successfully")
+  server.registerTool(
+    "get_subject_codes",
+    {
+      description:
+        "Get index codes for a specific subject/topic from Israel Statistics API",
+      inputSchema: getSubjectCodesSchema.shape,
+    },
+    withRateLimit(async (args) => {
+      const result = await getSubjectCodes(args)
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result),
+          },
+        ],
+      }
+    })
+  )
+
+  server.registerTool(
+    "get_index_calculator",
+    {
+      description:
+        "Calculate price linkage using Israel Statistics API index calculator",
+      inputSchema: getIndexCalculatorSchema.shape,
+    },
+    withRateLimit(async (args) => {
+      const result = await getIndexCalculator(args)
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result),
+          },
+        ],
+      }
+    })
+  )
+
+  server.registerTool(
+    "get_main_indices",
+    {
+      description:
+        "Get main indices by different bases from Israel Statistics API",
+      inputSchema: getMainIndicesSchema.shape,
+    },
+    withRateLimit(async (args) => {
+      const result = await getMainIndices(args)
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result),
+          },
+        ],
+      }
+    })
+  )
+
+  server.registerTool(
+    "get_main_indices_by_period",
+    {
+      description:
+        "Get main indices filtered by period from Israel Statistics API",
+      inputSchema: getMainIndicesByPeriodSchema.shape,
+    },
+    withRateLimit(async (args) => {
+      const result = await getMainIndicesByPeriod(args)
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result),
+          },
+        ],
+      }
+    })
+  )
+
+  server.registerTool(
+    "get_all_indices",
+    {
+      description:
+        "Get all indices by different bases with optional chapter filtering from Israel Statistics API",
+      inputSchema: getAllIndicesSchema.shape,
+    },
+    withRateLimit(async (args) => {
+      const result = await getAllIndices(args)
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result),
+          },
+        ],
+      }
+    })
+  )
+
+  console.error("[MCP] All 8 tools registered successfully")
 
   // Create stdio transport
   const transport = new StdioServerTransport()

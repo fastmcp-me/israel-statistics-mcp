@@ -1,3 +1,4 @@
+# Dockerfile for israel-statistics-mcp MCP server
 
 # 1. Builder stage - Use the latest Node.js 20 image with specific version
 FROM node:20.19.4-bookworm-slim AS builder
@@ -35,21 +36,27 @@ RUN pnpm run build
 # Remove dev dependencies and keep only production deps
 RUN pnpm prune --prod
 
-# 2. Final stage - Use distroless to eliminate PAM and other system vulnerabilities
-FROM gcr.io/distroless/nodejs20-debian12:latest
+# 2. Final stage - Use official Node.js slim (approved by Docker Hub)
+FROM node:20.19.4-bookworm-slim
 
-# Copy the built application from builder
-COPY --from=builder /app/package.json /app/package.json
-COPY --from=builder /app/dist /app/dist
-COPY --from=builder /app/node_modules /app/node_modules
+# Update packages for security
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Create a non-root user
+RUN useradd -m -u 1001 appuser
+
 WORKDIR /app
 
-# Distroless runs as nobody (65534) by default - no need to change user
+# Copy the built application from builder
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/dist ./dist/
+COPY --from=builder /app/node_modules ./node_modules/
 
-# Health check (distroless doesn't have shell, so we can't use complex healthchecks)
-# The container will be monitored externally
+# Switch to non-root user
+USER appuser
 
 # Run the application
-CMD ["dist/index.js"]
+CMD ["node", "dist/index.js"]

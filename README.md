@@ -1,3 +1,10 @@
+[![Add to Cursor](https://fastmcp.me/badges/cursor_dark.svg)](https://fastmcp.me/MCP/Details/1018/israel-statistics-cbs)
+[![Add to VS Code](https://fastmcp.me/badges/vscode_dark.svg)](https://fastmcp.me/MCP/Details/1018/israel-statistics-cbs)
+[![Add to Claude](https://fastmcp.me/badges/claude_dark.svg)](https://fastmcp.me/MCP/Details/1018/israel-statistics-cbs)
+[![Add to ChatGPT](https://fastmcp.me/badges/chatgpt_dark.svg)](https://fastmcp.me/MCP/Details/1018/israel-statistics-cbs)
+[![Add to Codex](https://fastmcp.me/badges/codex_dark.svg)](https://fastmcp.me/MCP/Details/1018/israel-statistics-cbs)
+[![Add to Gemini](https://fastmcp.me/badges/gemini_dark.svg)](https://fastmcp.me/MCP/Details/1018/israel-statistics-cbs)
+
 # Israel Statistics MCP Server
 
 A **Model Context Protocol (MCP) server** that provides programmatic access to the Israeli Central Bureau of Statistics (CBS) price indices and economic data. Built with TypeScript, this server offers 8 comprehensive tools for retrieving, analyzing, and calculating Israeli economic statistics.
